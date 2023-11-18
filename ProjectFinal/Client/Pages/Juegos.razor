@@ -1,0 +1,77 @@
+﻿@page "/juegos"
+@inject HttpClient _http
+@inject NavigationManager _navegar
+
+<div class="row">
+    <div class="col">
+        <Letrero Mensaje="Tabla de Juegos disponibles" />
+    </div>
+</div>
+<div class="col text-end">
+    <button class="btn btn-success" @onclick="Agregar"><span class="oi oi-plus me-3"> Agregar</span> </button>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th> Nombre </th>
+            <th> Categoria </th>
+            <th> Plataforma </th>
+            <th> Acciones </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Juego eljuego in juegos)
+        {
+            <tr>
+                <td> @eljuego.Nombre </td>
+                <td> @eljuego.Categoria </td>
+                <td> @eljuego.Plataforma </td>
+                <td>
+                    <button class=" btn btn-sm" @onclick="()=>Modificar(eljuego.Id)"><span class="oi oi-pencil"></span></button>
+                    <button class=" btn btn-sm" @onclick="()=>Eliminar(eljuego.Id)"><span class="oi oi-trash"></span></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mb-3 row">
+    <label class="col-sm-2 col-form-label"></label>
+</div>
+
+
+
+@code {
+    private int elId;
+    private Juego juego;
+
+
+    private List<Juego>? juegos = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        juegos = await _http.GetFromJsonAsync<List<Juego>>("api/juegos");
+    }
+
+    private void Agregar()
+    {
+        _navegar.NavigateTo("/nueva");
+    }
+
+    private async void Eliminar(int id)
+    {
+        await _http.DeleteAsync($"api/juegos/{id}");
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        juegos = await _http.GetFromJsonAsync<List<Juego>>("api/juegos");
+    }
+
+    private void Modificar(int id)
+    {
+        _navegar.NavigateTo($"/editar/{id}");
+    }
+}

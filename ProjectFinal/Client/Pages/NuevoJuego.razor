@@ -1,0 +1,75 @@
+﻿@page "/nueva"
+@page "/editar/{Id:int}"
+@inject NavigationManager _navegar
+@inject HttpClient _http
+
+<div class="container">
+    <Letrero2 Mensaje=@mensaje />
+    <EditForm Model="eljuego" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <div class="mb-3 row">
+            <label for="txtNombre" class="col-sm-2 col-form-label">Nombre</label>
+            <div class="col-sm-10">
+                <InputText id="txtNombre" class="form-control" @bind-Value="eljuego.Nombre" />
+                <ValidationMessage For="()=>eljuego.Nombre" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtCategoria" class="col-sm-2 col-form-label">Categoria</label>
+            <div class="col-sm-10">
+                <InputText id="txtCategoria" class="form-control" @bind-Value="eljuego.Categoria" />
+                <ValidationMessage For="()=>eljuego.Categoria" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtPlataforma" class="col-sm-2 col-form-label">Plataforma disponible</label>
+            <div class="col-sm-10">
+                <InputText id="txtPlataforma" class="form-control" @bind-Value="eljuego.Plataforma" />
+                <ValidationMessage For="()=>eljuego.Plataforma" />
+            </div>
+        </div>
+        <button class="btn btn-success" type="submit"><span class="oi oi-check"></span> Guardar</button>
+        <button class="btn btn-danger" @onclick="Cancelar"><span class="oi oi-circle-x"></span> Cancelar</button>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Juego eljuego = new();
+    private string mensaje = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != 0)
+        {
+            mensaje = "Modificar Juego";
+            eljuego = await _http.GetFromJsonAsync<Juego>($"api/juegos/{Id}");
+        }
+        else
+        {
+            mensaje = "Nuevo Juego";
+            eljuego = new();
+        }
+    }
+
+    private async Task Guardar()
+    {
+        if (Id == 0)
+        {
+            await _http.PostAsJsonAsync<Juego>("api/juegos", eljuego);
+        }
+        else
+        {
+            await _http.PutAsJsonAsync<Juego>($"api/juegos/{Id}", eljuego);
+        }
+
+        _navegar.NavigateTo("/juegos");
+    }
+
+
+    private void Cancelar()
+    {
+        _navegar.NavigateTo("/juegos");
+    }
+}
