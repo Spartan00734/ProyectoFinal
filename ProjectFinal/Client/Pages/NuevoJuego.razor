@@ -1,5 +1,5 @@
-﻿@page "/nueva"
-@page "/editar/{Id:int}"
+﻿@page "/nuevoJuego"
+@page "/editarJuego/{Id:int}"
 @inject NavigationManager _navegar
 @inject HttpClient _http
 
@@ -10,21 +10,21 @@
         <div class="mb-3 row">
             <label for="txtNombre" class="col-sm-2 col-form-label">Nombre</label>
             <div class="col-sm-10">
-                <InputText id="txtNombre" class="form-control" @bind-Value="eljuego.Nombre" />
+                <InputText id="txtNombre" class="form-control" placeholder="Ingrese el nombre del juego" @bind-Value="eljuego.Nombre" />
                 <ValidationMessage For="()=>eljuego.Nombre" />
             </div>
         </div>
         <div class="mb-3 row">
             <label for="txtCategoria" class="col-sm-2 col-form-label">Categoria</label>
             <div class="col-sm-10">
-                <InputText id="txtCategoria" class="form-control" @bind-Value="eljuego.Categoria" />
+                <InputText id="txtCategoria" class="form-control" placeholder="Ingrese la categoría del juego" @bind-Value="eljuego.Categoria" />
                 <ValidationMessage For="()=>eljuego.Categoria" />
             </div>
         </div>
         <div class="mb-3 row">
             <label for="txtPlataforma" class="col-sm-2 col-form-label">Plataforma disponible</label>
             <div class="col-sm-10">
-                <InputText id="txtPlataforma" class="form-control" @bind-Value="eljuego.Plataforma" />
+                <InputText id="txtPlataforma" class="form-control" placeholder="Ingrese sus plataformas disponibles" @bind-Value="eljuego.Plataforma" />
                 <ValidationMessage For="()=>eljuego.Plataforma" />
             </div>
         </div>

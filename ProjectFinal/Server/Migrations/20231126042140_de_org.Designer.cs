@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectFinal.Server.Data;
 
@@ -10,9 +11,10 @@ using ProjectFinal.Server.Data;
 namespace ProjectFinal.Server.Migrations
 {
     [DbContext(typeof(PlataformaDbContext))]
-    partial class PlataformaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231126042140_de_org")]
+    partial class de_org
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,12 +46,7 @@ namespace ProjectFinal.Server.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<int>("TorneoId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TorneoId");
 
                     b.ToTable("Juegos");
                 });
@@ -75,71 +72,9 @@ namespace ProjectFinal.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TorneoId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("TorneoId");
 
                     b.ToTable("Organizadores");
-                });
-
-            modelBuilder.Entity("ProjectFinal.Shared.Models.Torneo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("FechaIn")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Premios")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Torneos");
-                });
-
-            modelBuilder.Entity("ProjectFinal.Shared.Models.Juego", b =>
-                {
-                    b.HasOne("ProjectFinal.Shared.Models.Torneo", "Torneo")
-                        .WithMany("Juegos")
-                        .HasForeignKey("TorneoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Torneo");
-                });
-
-            modelBuilder.Entity("ProjectFinal.Shared.Models.Organizador", b =>
-                {
-                    b.HasOne("ProjectFinal.Shared.Models.Torneo", "Torneo")
-                        .WithMany("Organizadores")
-                        .HasForeignKey("TorneoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Torneo");
-                });
-
-            modelBuilder.Entity("ProjectFinal.Shared.Models.Torneo", b =>
-                {
-                    b.Navigation("Juegos");
-
-                    b.Navigation("Organizadores");
                 });
 #pragma warning restore 612, 618
         }

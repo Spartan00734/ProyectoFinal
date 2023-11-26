@@ -1,0 +1,75 @@
+﻿@page "/nuevaOrg"
+@page "/editarOrg/{Id:int}"
+@inject NavigationManager _navegar
+@inject HttpClient _http
+
+<div class="container">
+    <Letrero2 Mensaje=@mensaje />
+    <EditForm Model="elorganizador" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <div class="mb-3 row">
+            <label for="txtNombre" class="col-sm-2 col-form-label">Nombre de la Organización o del Organizador Individual</label>
+            <div class="col-sm-10">
+                <InputText id="txtNombre" class="form-control" placeholder="Ingrese el nombre de la organización o persona individual" @bind-Value="elorganizador.Nombre" />
+                <ValidationMessage For="()=>elorganizador.Nombre" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtCorreo" class="col-sm-2 col-form-label">Correo Electrónico</label>
+            <div class="col-sm-10">
+                <InputText id="txtCorreo" class="form-control" placeholder="Ingrese su correo" @bind-Value="elorganizador.Correo" />
+                <ValidationMessage For="()=>elorganizador.Correo" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtTelefono" class="col-sm-2 col-form-label">Teléfono</label>
+            <div class="col-sm-10">
+                <InputText id="txtTelefono" class="form-control" placeholder="Ingrese su número de teléfono" @bind-Value="elorganizador.Telefono" />
+                <ValidationMessage For="()=>elorganizador.Telefono" />
+            </div>
+        </div>
+        <button class="btn btn-success" type="submit"><span class="oi oi-check"></span> Guardar</button>
+        <button class="btn btn-danger" @onclick="Cancelar"><span class="oi oi-circle-x"></span> Cancelar</button>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Organizador elorganizador = new();
+    private string mensaje = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != 0)
+        {
+            mensaje = "Modificar Organizador";
+            elorganizador = await _http.GetFromJsonAsync<Organizador>($"api/organizadores/{Id}");
+        }
+        else
+        {
+            mensaje = "Nuevo Organizador";
+            elorganizador = new();
+        }
+    }
+
+    private async Task Guardar()
+    {
+        if (Id == 0)
+        {
+            await _http.PostAsJsonAsync<Organizador>("api/organizadores", elorganizador);
+        }
+        else
+        {
+            await _http.PutAsJsonAsync<Organizador>($"api/organizadores/{Id}", elorganizador);
+        }
+
+        _navegar.NavigateTo("/organizadores");
+    }
+
+
+    private void Cancelar()
+    {
+        _navegar.NavigateTo("/organizadores");
+    }
+}

@@ -1,0 +1,78 @@
+﻿@page "/torneos"
+@inject HttpClient _http
+@inject NavigationManager _navegar
+
+<div class="row">
+    <div class="col">
+        <Letrero Mensaje="Tabla de Torneos Disponibles" />
+    </div>
+</div>
+<div class="col text-end">
+    <button class="btn btn-success" @onclick="Agregar"><span class="oi oi-plus me-3"> Agregar </span> </button>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th> Nombre </th>
+            <th> Fecha de inicio </th>
+            <th> Juego </th>
+            <th> Organizador del torneo </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Torneo eltorneo in torneos)
+        {
+            <tr>
+                <td> @eltorneo.Nombre </td>
+                <td> @eltorneo.FechaIn </td>
+                <td> @eltorneo.Juegos </td>
+                <td> @eltorneo.Organizadores </td>
+                <td>
+                    <button class=" btn btn-sm" @onclick="()=>Modificar(eltorneo.Id)"><span class="oi oi-pencil"></span></button>
+                    <button class=" btn btn-sm" @onclick="()=>Eliminar(eltorneo.Id)"><span class="oi oi-trash"></span></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mb-3 row">
+    <label class="col-sm-2 col-form-label"></label>
+</div>
+
+
+
+@code {
+    private int elId;
+    private Torneo torneo;
+
+
+    private List<Torneo>? torneos = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        torneos = await _http.GetFromJsonAsync<List<Torneo>>("api/torneos");
+    }
+
+    private void Agregar()
+    {
+        _navegar.NavigateTo("/nuevoTorneo");
+    }
+
+    private async void Eliminar(int id)
+    {
+        await _http.DeleteAsync($"api/torneos/{id}");
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        torneos = await _http.GetFromJsonAsync<List<Torneo>>("api/torneos");
+    }
+
+    private void Modificar(int id)
+    {
+        _navegar.NavigateTo($"/editarTorneo/{id}");
+    }
+}

@@ -1,0 +1,77 @@
+﻿@page "/organizadores"
+@inject HttpClient _http
+@inject NavigationManager _navegar
+
+<div class="row">
+    <div class="col">
+        <Letrero Mensaje="Tabla de Organizadores activos" />
+    </div>
+</div>
+<div class="col text-end">
+    <button class="btn btn-success" @onclick="Agregar"><span class="oi oi-plus me-3"> Agregar</span> </button>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th> Nombre </th>
+            <th> Correo </th>
+            <th> Telefono </th>
+            <th> Acciones </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Organizador elorg in organizadores)
+        {
+            <tr>
+                <td> @elorg.Nombre </td>
+                <td> @elorg.Correo </td>
+                <td> @elorg.Telefono </td>
+                <td>
+                    <button class=" btn btn-sm" @onclick="()=>Modificar(elorg.Id)"><span class="oi oi-pencil"></span></button>
+                    <button class=" btn btn-sm" @onclick="()=>Eliminar(elorg.Id)"><span class="oi oi-trash"></span></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mb-3 row">
+    <label class="col-sm-2 col-form-label"></label>
+</div>
+
+
+
+@code {
+    private int elId;
+    private Organizador organizador;
+
+
+    private List<Organizador>? organizadores = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        organizadores = await _http.GetFromJsonAsync<List<Organizador>>("api/organizadores");
+    }
+
+    private void Agregar()
+    {
+        _navegar.NavigateTo("/nuevaOrg");
+    }
+
+    private async void Eliminar(int id)
+    {
+        await _http.DeleteAsync($"api/organizadores/{id}");
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        organizadores = await _http.GetFromJsonAsync<List<Organizador>>("api/organizadores");
+    }
+
+    private void Modificar(int id)
+    {
+        _navegar.NavigateTo($"/editarOrg/{id}");
+    }
+}
