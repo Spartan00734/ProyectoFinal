@@ -16,10 +16,14 @@ namespace ProjectFinal.Shared.Models
         [Required(ErrorMessage = "Debe escribir la fecha de inicio del torneo")]
         [StringLength(50, ErrorMessage = "El nombre de la fecha de inicio no es válido")]
         public string? FechaIn { get; set; }
-        public virtual ICollection<Juego>? Juegos { get; set; }
-        public virtual ICollection<Organizador>? Organizadores { get; set; }
         [Required(ErrorMessage = "Debe escribir los premios del torneo")]
         [StringLength(100, ErrorMessage = "El valor de los premios no es válido")]
         public string? Premios { get; set; }
+        public int JuegoId { get; set; }
+        public Juego? Juego { get; set; }
+        public int OrganizadorId { get; set; }
+        public Organizador? Organizador { get; set; }
+        public virtual ICollection<Jugador>? Jugadores { get; set; }
+
     }
 }

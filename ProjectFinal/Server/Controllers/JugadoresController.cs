@@ -13,56 +13,56 @@ namespace ProjectFinal.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TorneosController : ControllerBase
+    public class JugadoresController : ControllerBase
     {
         private readonly PlataformaDbContext _context;
 
-        public TorneosController(PlataformaDbContext context)
+        public JugadoresController(PlataformaDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Torneos
+        // GET: api/Jugadores
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TorneoDTO>>> GetTorneos()
+        public async Task<ActionResult<IEnumerable<JugadorDTO>>> GetJugadores()
         {
-            if (_context.Torneos == null)
+            if (_context.Jugadores == null)
             {
                 return NotFound();
             }
-            var respuesta = _context.Torneos.Include(j => j.Juego).Include(o => o.Organizador).Select(r => new TorneoDTO() { Id = r.Id, Nombre = r.Nombre, FechaIn = r.FechaIn, Premios = r.Premios, NombreJuegos = r.Juego.Nombre, NombreOrganizador = r.Organizador.Nombre });
+            var respuesta = _context.Jugadores.Include(j => j.Torneo).Select(r => new JugadorDTO() { Id = r.Id, Nombre = r.Nombre, Edad = r.Edad, Pais_Residencia = r.Pais_Residencia, NombreJuegos = r.Torneo.Juego.Nombre, NombreOrganizador = r.Torneo.Organizador.Nombre, NombreTorneo = r.Torneo.Nombre });
             return await respuesta.ToListAsync();
         }
 
-        // GET: api/Torneos/5
+        // GET: api/Jugadores/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Torneo>> GetTorneo(int id)
+        public async Task<ActionResult<Jugador>> GetJugador(int id)
         {
-          if (_context.Torneos == null)
+          if (_context.Jugadores == null)
           {
               return NotFound();
           }
-            var torneo = await _context.Torneos.FindAsync(id);
+            var jugador = await _context.Jugadores.FindAsync(id);
 
-            if (torneo == null)
+            if (jugador == null)
             {
                 return NotFound();
             }
 
-            return torneo;
+            return jugador;
         }
 
-        // PUT: api/Torneos/5
+        // PUT: api/Jugadores/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTorneo(int id, Torneo torneo)
+        public async Task<IActionResult> PutJugador(int id, Jugador jugador)
         {
-            if (id != torneo.Id)
+            if (id != jugador.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(torneo).State = EntityState.Modified;
+            _context.Entry(jugador).State = EntityState.Modified;
 
             try
             {
@@ -70,7 +70,7 @@ namespace ProjectFinal.Server.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TorneoExists(id))
+                if (!JugadorExists(id))
                 {
                     return NotFound();
                 }
@@ -83,44 +83,44 @@ namespace ProjectFinal.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/Torneos
+        // POST: api/Jugadores
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Torneo>> PostTorneo(Torneo torneo)
+        public async Task<ActionResult<Jugador>> PostJugador(Jugador jugador)
         {
-          if (_context.Torneos == null)
+          if (_context.Jugadores == null)
           {
-              return Problem("Entity set 'PlataformaDbContext.Torneos'  is null.");
+              return Problem("Entity set 'PlataformaDbContext.Jugadores'  is null.");
           }
-            _context.Torneos.Add(torneo);
+            _context.Jugadores.Add(jugador);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTorneo", new { id = torneo.Id }, torneo);
+            return CreatedAtAction("GetJugador", new { id = jugador.Id }, jugador);
         }
 
-        // DELETE: api/Torneos/5
+        // DELETE: api/Jugadores/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTorneo(int id)
+        public async Task<IActionResult> DeleteJugador(int id)
         {
-            if (_context.Torneos == null)
+            if (_context.Jugadores == null)
             {
                 return NotFound();
             }
-            var torneo = await _context.Torneos.FindAsync(id);
-            if (torneo == null)
+            var jugador = await _context.Jugadores.FindAsync(id);
+            if (jugador == null)
             {
                 return NotFound();
             }
 
-            _context.Torneos.Remove(torneo);
+            _context.Jugadores.Remove(jugador);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool TorneoExists(int id)
+        private bool JugadorExists(int id)
         {
-            return (_context.Torneos?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Jugadores?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

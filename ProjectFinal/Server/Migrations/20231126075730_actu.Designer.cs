@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProjectFinal.Server.Data;
 
@@ -10,9 +11,10 @@ using ProjectFinal.Server.Data;
 namespace ProjectFinal.Server.Migrations
 {
     [DbContext(typeof(PlataformaDbContext))]
-    partial class PlataformaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231126075730_actu")]
+    partial class actu
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,37 +49,6 @@ namespace ProjectFinal.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Juegos");
-                });
-
-            modelBuilder.Entity("ProjectFinal.Shared.Models.Jugador", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("Edad")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Pais_Residencia")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("TorneoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TorneoId");
-
-                    b.ToTable("Jugadores");
                 });
 
             modelBuilder.Entity("ProjectFinal.Shared.Models.Organizador", b =>
@@ -144,17 +115,6 @@ namespace ProjectFinal.Server.Migrations
                     b.ToTable("Torneos");
                 });
 
-            modelBuilder.Entity("ProjectFinal.Shared.Models.Jugador", b =>
-                {
-                    b.HasOne("ProjectFinal.Shared.Models.Torneo", "Torneo")
-                        .WithMany("Jugadores")
-                        .HasForeignKey("TorneoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Torneo");
-                });
-
             modelBuilder.Entity("ProjectFinal.Shared.Models.Torneo", b =>
                 {
                     b.HasOne("ProjectFinal.Shared.Models.Juego", "Juego")
@@ -182,11 +142,6 @@ namespace ProjectFinal.Server.Migrations
             modelBuilder.Entity("ProjectFinal.Shared.Models.Organizador", b =>
                 {
                     b.Navigation("Torneos");
-                });
-
-            modelBuilder.Entity("ProjectFinal.Shared.Models.Torneo", b =>
-                {
-                    b.Navigation("Jugadores");
                 });
 #pragma warning restore 612, 618
         }

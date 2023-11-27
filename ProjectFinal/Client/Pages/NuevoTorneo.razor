@@ -1,5 +1,103 @@
-﻿<h3>NuevoTorneo</h3>
+﻿@page "/nuevoTorneo"
+@page "/editarTorneo/{Id:int}"
+@inject NavigationManager _navegar
+@inject HttpClient _http
+
+<div class="container">
+    <Letrero2 Mensaje=@mensaje />
+    <EditForm Model="eltorneo" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <div class="mb-3 row">
+            <label for="txtNombre" class="col-sm-2 col-form-label">Nombre del Torneo</label>
+            <div class="col-sm-10">
+                <InputText id="txtNombre" class="form-control" placeholder="Ingrese el nombre del torneo" @bind-Value="eltorneo.Nombre" />
+                <ValidationMessage For="()=>eltorneo.Nombre" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtFechaIn" class="col-sm-2 col-form-label">Fecha de Inicio del Torneo</label>
+            <div class="col-sm-10">
+                <InputText id="txtFechaIn" class="form-control" placeholder="Ingrese la fecha de inicio" @bind-Value="eltorneo.FechaIn" />
+                <ValidationMessage For="()=>eltorneo.FechaIn" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtJuego" class="col-sm-2 col-form-label">Juego</label>
+            <div class="col-sm-10">
+                <InputSelect id="txtJuego" class="form-control" @bind-Value="eltorneo.JuegoId">
+                    @foreach (Juego juego in losjuegos)
+                    {
+                        <option value="@juego.Id">@juego.Nombre</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="()=>eltorneo.JuegoId" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtOrganizador" class="col-sm-2 col-form-label">Organizador</label>
+            <div class="col-sm-10">
+                <InputSelect id="txtOrganizador" class="form-control" @bind-Value="eltorneo.OrganizadorId">
+                    @foreach (Organizador organizador in losorganizadores)
+                    {
+                        <option value="@organizador.Id">@organizador.Nombre</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="()=>eltorneo.OrganizadorId" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtPremio" class="col-sm-2 col-form-label">Premios del Torneo</label>
+            <div class="col-sm-10">
+                <InputText id="txtPremio" class="form-control" placeholder="Ingrese los premios del torneo (Efectivo o Materiales)" @bind-Value="eltorneo.Premios" />
+                <ValidationMessage For="()=>eltorneo.Premios" />
+            </div>
+        </div>
+        <button class="btn btn-success" type="submit"><span class="oi oi-check"></span> Guardar</button>
+        <button class="btn btn-danger" @onclick="Cancelar"><span class="oi oi-circle-x"></span> Cancelar</button>
+    </EditForm>
+</div>
 
 @code {
+    [Parameter]
+    public int Id { get; set; }
+    private Torneo eltorneo = new();
+    private string mensaje = "";
+    private List<Juego> losjuegos = new();
+    private List<Organizador> losorganizadores = new();
 
+    protected override async Task OnParametersSetAsync()
+    {
+        losjuegos = await _http.GetFromJsonAsync<List<Juego>>("api/juegos");
+        losorganizadores = await _http.GetFromJsonAsync<List<Organizador>>("api/organizadores");
+        if (Id != 0)
+        {
+            mensaje = "Modifique el Torneo";
+            eltorneo = await _http.GetFromJsonAsync<Torneo>($"api/torneos/{Id}");
+        }
+        else
+        {
+            mensaje = "Registre un Nuevo Torneo";
+            eltorneo = new();
+        }
+    }
+
+    private async Task Guardar()
+    {
+        if (Id == 0)
+        {
+            await _http.PostAsJsonAsync<Torneo>("api/torneos", eltorneo);
+        }
+        else
+        {
+            await _http.PutAsJsonAsync<Torneo>($"api/torneos/{Id}", eltorneo);
+        }
+
+        _navegar.NavigateTo("/torneos");
+    }
+
+
+    private void Cancelar()
+    {
+        _navegar.NavigateTo("/torneos");
+    }
 }

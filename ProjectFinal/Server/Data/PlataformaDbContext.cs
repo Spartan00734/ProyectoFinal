@@ -12,5 +12,6 @@ namespace ProjectFinal.Server.Data
         public DbSet<Juego> Juegos { get; set; }
         public DbSet<Organizador> Organizadores { get; set; }
         public DbSet<Torneo> Torneos { get; set; }
+        public DbSet<Jugador> Jugadores { get; set; }
     }
 }

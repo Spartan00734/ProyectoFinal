@@ -43,12 +43,12 @@
     {
         if (Id != 0)
         {
-            mensaje = "Modificar Juego";
+            mensaje = "Modifique el Juego";
             eljuego = await _http.GetFromJsonAsync<Juego>($"api/juegos/{Id}");
         }
         else
         {
-            mensaje = "Nuevo Juego";
+            mensaje = "Registre un Nuevo Juego";
             eljuego = new();
         }
     }

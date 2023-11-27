@@ -19,7 +19,6 @@ namespace ProjectFinal.Shared.Models
         [Required(ErrorMessage = "Debe escribir la plataforma compatible del juego")]
         [StringLength(30, ErrorMessage = "La plataforma no es válida")]
         public string? Plataforma { get; set; }
-        public int TorneoId { get; set; }
-        public Torneo? Torneo { get; set; }
+        public virtual ICollection<Torneo>? Torneos { get; set; }
     }
 }

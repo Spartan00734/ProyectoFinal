@@ -1,0 +1,87 @@
+﻿@page "/jugadores"
+
+@inject HttpClient _http
+@inject NavigationManager _navegar
+
+<div class="row">
+    <div class="col">
+        <Letrero Mensaje="Tabla de Jugadores Inscritos" />
+    </div>
+</div>
+<div class="mt-3">
+    <h3 class="text-dark">¿Quiéres participar en un torneo? Muy fácil! Solo debes inscribirte y escoger el torneo de tu preferencia.</h3>
+</div>
+<div class="col text-end">
+    <button class="btn btn-primary" @onclick="Agregar"><span class="oi oi-plus me-3"> Inscribirse </span> </button>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th> Nombre </th>
+            <th> Edad </th>
+            <th> País de Residencia </th>
+            <th> Inscrito al Torneo: </th>
+            <th> Juego del Torneo </th>
+            <th> Organizadora del Torneo </th>
+            <th> Acciones </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (JugadorDTO eljugador in jugadores)
+        {
+            <tr>
+                <td> @eljugador.Nombre </td>
+                <td> @eljugador.Edad </td>
+                <td> @eljugador.Pais_Residencia </td>
+                <td> @eljugador.NombreTorneo </td>
+                <td> @eljugador.NombreJuegos </td>
+                <td> @eljugador.NombreOrganizador </td>
+                <td>
+                    <button class=" btn btn-sm" @onclick="()=>Modificar(eljugador.Id)"><span class="oi oi-pencil" title="Modificar Jugador"></span></button>
+                    <button class=" btn btn-sm" @onclick="()=>Eliminar(eljugador.Id)"><span class="oi oi-trash" title="Eliminar Jugador"></span></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="mb-3 row">
+    <label class="col-sm-2 col-form-label"></label>
+</div>
+
+
+
+@code {
+    private int elId;
+    private JugadorDTO jugador;
+
+
+    private List<JugadorDTO>? jugadores = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        jugadores = await _http.GetFromJsonAsync<List<JugadorDTO>>("api/jugadores");
+    }
+
+    private void Agregar()
+    {
+        _navegar.NavigateTo("/nuevoJugador");
+    }
+
+    private async void Eliminar(int id)
+    {
+        await _http.DeleteAsync($"api/jugadores/{id}");
+        await CargarDatos();
+    }
+
+    private async Task CargarDatos()
+    {
+        jugadores = await _http.GetFromJsonAsync<List<JugadorDTO>>("api/jugadores");
+    }
+
+    private void Modificar(int id)
+    {
+        _navegar.NavigateTo($"/editarJugador/{id}");
+    }
+}

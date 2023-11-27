@@ -1,0 +1,94 @@
+﻿@page "/nuevoJugador"
+@page "/editarJugador/{Id:int}"
+@inject NavigationManager _navegar
+@inject HttpClient _http
+
+<div class="container">
+    <Letrero2 Mensaje=@mensaje />
+    <EditForm Model="eljugador" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <div class="mb-3 row">
+            <label for="txtNombre" class="col-sm-2 col-form-label">Nombre del Jugador</label>
+            <div class="col-sm-10">
+                <InputText id="txtNombre" class="form-control" placeholder="Ingrese el nombre del jugador" @bind-Value="eljugador.Nombre" />
+                <ValidationMessage For="()=>eljugador.Nombre" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtEdad" class="col-sm-2 col-form-label">Edad</label>
+            <div class="col-sm-10">
+                <InputNumber id="txtEdad" class="form-control" placeholder="Ingrese la fecha de inicio" @bind-Value="eljugador.Edad" />
+                <ValidationMessage For="()=>eljugador.Edad" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtPais" class="col-sm-2 col-form-label">País de origen</label>
+            <div class="col-sm-10">
+                <InputText id="txtPais" class="form-control" placeholder="Ingrese su país de residencia" @bind-Value="eljugador.Pais_Residencia" />
+                <ValidationMessage For="()=>eljugador.Pais_Residencia" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtTorneo" class="col-sm-2 col-form-label">Torneos disponibles para inscribirse</label>
+            <div class="col-sm-10">
+                <InputSelect id="txtTorneo" class="form-control" @bind-Value="eljugador.TorneoId">
+                    @foreach (Torneo torneo in lostorneos)
+                    {
+                        <option value="@torneo.Id">@torneo.Nombre</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="()=>eljugador.TorneoId" />
+            </div>
+        </div>
+        <button class="btn btn-success" type="submit"><span class="oi oi-check"></span> Guardar</button>
+        <button class="btn btn-danger" @onclick="Cancelar"><span class="oi oi-circle-x"></span> Cancelar</button>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    private Jugador eljugador = new();
+    private string mensaje = "";
+    private List<Juego> losjuegos = new();
+    private List<Organizador> losorganizadores = new();
+    private List<Torneo> lostorneos = new();
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        losjuegos = await _http.GetFromJsonAsync<List<Juego>>("api/juegos");
+        losorganizadores = await _http.GetFromJsonAsync<List<Organizador>>("api/organizadores");
+        lostorneos = await _http.GetFromJsonAsync<List<Torneo>>("api/torneos");
+        if (Id != 0)
+        {
+            mensaje = "Modifique al Jugador";
+            eljugador = await _http.GetFromJsonAsync<Jugador>($"api/jugadores/{Id}");
+        }
+        else
+        {
+            mensaje = "Registro de Jugador";
+            eljugador = new();
+        }
+    }
+
+    private async Task Guardar()
+    {
+        if (Id == 0)
+        {
+            await _http.PostAsJsonAsync<Jugador>("api/jugadores", eljugador);
+        }
+        else
+        {
+            await _http.PutAsJsonAsync<Jugador>($"api/jugadores/{Id}", eljugador);
+        }
+
+        _navegar.NavigateTo("/jugadores");
+    }
+
+
+    private void Cancelar()
+    {
+        _navegar.NavigateTo("/jugadores");
+    }
+}

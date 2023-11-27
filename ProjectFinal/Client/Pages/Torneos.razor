@@ -1,4 +1,5 @@
 ﻿@page "/torneos"
+
 @inject HttpClient _http
 @inject NavigationManager _navegar
 
@@ -7,8 +8,11 @@
         <Letrero Mensaje="Tabla de Torneos Disponibles" />
     </div>
 </div>
+<div class="mt-3">
+    <h3 class="text-dark">Chequea algunos de nuestros torneos activos o próximos a dar inicio! Puedes crear un torneo registrando tu organización y juegos a la plataforma.</h3>
+</div>
 <div class="col text-end">
-    <button class="btn btn-success" @onclick="Agregar"><span class="oi oi-plus me-3"> Agregar </span> </button>
+    <button class="btn btn-primary" @onclick="Agregar"><span class="oi oi-plus me-3"> Agregar un torneo nuevo </span> </button>
 </div>
 
 <table class="table table-striped">
@@ -18,19 +22,22 @@
             <th> Fecha de inicio </th>
             <th> Juego </th>
             <th> Organizador del torneo </th>
+            <th> Premios del Torneo </th>
+            <th> Acciones </th>
         </tr>
     </thead>
     <tbody>
-        @foreach (Torneo eltorneo in torneos)
+        @foreach (TorneoDTO eltorneo in torneos)
         {
             <tr>
                 <td> @eltorneo.Nombre </td>
                 <td> @eltorneo.FechaIn </td>
-                <td> @eltorneo.Juegos </td>
-                <td> @eltorneo.Organizadores </td>
+                <td> @eltorneo.NombreJuegos </td>
+                <td> @eltorneo.NombreOrganizador </td>
+                <td> @eltorneo.Premios </td>
                 <td>
-                    <button class=" btn btn-sm" @onclick="()=>Modificar(eltorneo.Id)"><span class="oi oi-pencil"></span></button>
-                    <button class=" btn btn-sm" @onclick="()=>Eliminar(eltorneo.Id)"><span class="oi oi-trash"></span></button>
+                    <button class=" btn btn-sm" @onclick="()=>Modificar(eltorneo.Id)"><span class="oi oi-pencil" title="Modificar Torneo"></span></button>
+                    <button class=" btn btn-sm" @onclick="()=>Eliminar(eltorneo.Id)"><span class="oi oi-trash" title="Eliminar Torneo"></span></button>
                 </td>
             </tr>
         }
@@ -45,14 +52,14 @@
 
 @code {
     private int elId;
-    private Torneo torneo;
+    private TorneoDTO torneo;
 
 
-    private List<Torneo>? torneos = new();
+    private List<TorneoDTO>? torneos = new();
 
     protected override async Task OnInitializedAsync()
     {
-        torneos = await _http.GetFromJsonAsync<List<Torneo>>("api/torneos");
+        torneos = await _http.GetFromJsonAsync<List<TorneoDTO>>("api/torneos");
     }
 
     private void Agregar()
@@ -68,7 +75,7 @@
 
     private async Task CargarDatos()
     {
-        torneos = await _http.GetFromJsonAsync<List<Torneo>>("api/torneos");
+        torneos = await _http.GetFromJsonAsync<List<TorneoDTO>>("api/torneos");
     }
 
     private void Modificar(int id)

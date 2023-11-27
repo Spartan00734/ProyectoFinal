@@ -19,7 +19,6 @@ namespace ProjectFinal.Shared.Models
         [Required(ErrorMessage = "Debe escribir un número de teléfono")]
         [Phone(ErrorMessage = "El teléfono debe ser válido")]
         public string? Telefono { get; set; }
-        public int TorneoId { get; set; }
-        public Torneo? Torneo { get; set; }
+        public virtual ICollection<Torneo>? Torneos { get; set; }
     }
 }
